@@ -149,7 +149,7 @@ func (r *Report) writeCell(sheetName string, cellRef string, value interface{}) 
 	} else if boolean, ok := value.(bool); ok {
 		r.file.SetCellBool(sheetName, cellRef, boolean)
 	} else {
-		if style, err := r.file.NewStyle(`{"number_format": 2, "alignment": { "vertical": "center" }}`); err == nil {
+		if style, err := r.file.NewStyle(`{"number_format": 0, "alignment": { "vertical": "center" }}`); err == nil {
 			r.file.SetCellStyle(sheetName, cellRef, cellRef, style)
 		}
 		r.file.SetCellValue(sheetName, cellRef, value)
