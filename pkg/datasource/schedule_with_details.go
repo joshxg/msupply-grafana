@@ -55,7 +55,8 @@ func (datasource *MsupplyEresDatasource) CreateScheduleWithDetails(scheduleWithD
 		scheduleWithDetails.ID = uuid.New().String()
 
 		scheduleWithDetails.UpdateNextReportTime()
-
+		scheduleWithDetails.Status = "success"
+		
 		_, err = stmt.Exec(scheduleWithDetails.ID, scheduleWithDetails.NextReportTime, scheduleWithDetails.Interval, scheduleWithDetails.Name, scheduleWithDetails.Description, scheduleWithDetails.Lookback, scheduleWithDetails.ReportGroupID, scheduleWithDetails.Time, scheduleWithDetails.Day, scheduleWithDetails.DateFormat, scheduleWithDetails.DatePosition, scheduleWithDetails.Status)
 		if err != nil {
 			err = ereserror.New(500, errors.Wrap(err, frame.Function), "Could not create schedule record")
