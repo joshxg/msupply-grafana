@@ -147,7 +147,7 @@ func (datasource *MsupplyEresDatasource) UpdateSchedule(id string, status string
 	db, err := sql.Open("sqlite", datasource.DataPath)
 	defer db.Close()
 	if err != nil {
-		log.DefaultLogger.Error("UpdateSchedule: sql.Open()", err.Error())
+		log.DefaultLogger.Error(": sql.Open()", err.Error())
 		return nil, err
 	}
 
@@ -158,7 +158,8 @@ func (datasource *MsupplyEresDatasource) UpdateSchedule(id string, status string
 	}
 
 	schedule.UpdateNextReportTime()
-	_, err = stmt.Exec(schedule.NextReportTime, schedule.Interval, schedule.Name, schedule.Description, schedule.Lookback, schedule.ReportGroupID, schedule.Time, schedule.Day, schedule.DateFormat, schedule.DatePosition, schedule.Status, id)
+
+	_, err = stmt.Exec(schedule.NextReportTime, schedule.Interval, schedule.Name, schedule.Description, schedule.Lookback, schedule.ReportGroupID, schedule.Time, schedule.Day, schedule.DateFormat, schedule.DatePosition, status, id)
 	defer stmt.Close()
 	if err != nil {
 		log.DefaultLogger.Error("UpdateSchedule: stmt.Exec()", err.Error())
@@ -177,12 +178,15 @@ func (datasource *MsupplyEresDatasource) UpdateScheduleProgess(id string, status
 	}
 
 	stmt, err := db.Prepare("UPDATE Schedule SET nextReportTime = ?, interval = ?, name = ?, description = ?, lookback = ?, reportGroupID = ?, time = ?, day = ?, dateFormat = ?, datePosition = ?, status = ? where id = ?")
+	log.DefaultLogger.Info("anil test executing update code for status",status)
+	log.DefaultLogger.Info("anil test executing update code for schedule",schedule)
+	
 	if err != nil {
 		log.DefaultLogger.Error("UpdateSchedule: db.Prepare()", err.Error())
 		return nil, err
 	}
 
-	_, err = stmt.Exec(schedule.NextReportTime, schedule.Interval, schedule.Name, schedule.Description, schedule.Lookback, schedule.ReportGroupID, schedule.Time, schedule.Day, schedule.DateFormat, schedule.DatePosition, schedule.Status, id)
+	_, err = stmt.Exec(schedule.NextReportTime, schedule.Interval, schedule.Name, schedule.Description, schedule.Lookback, schedule.ReportGroupID, schedule.Time, schedule.Day, schedule.DateFormat, schedule.DatePosition, status, id)
 	defer stmt.Close()
 	if err != nil {
 		log.DefaultLogger.Error("UpdateSchedule: stmt.Exec()", err.Error())

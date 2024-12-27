@@ -68,6 +68,7 @@ func (re *ReportEmailer) cleanup(schedules []datasource.Schedule) {
 		}
 
 		schedule.UpdateNextReportTime()
+	    log.DefaultLogger.Info("anil test cleanup schedule id "+schedule.ID + "to status success")
 		re.datasource.UpdateSchedule(schedule.ID, "success", schedule)
 	}
 
@@ -215,6 +216,7 @@ func (re *ReportEmailer) CreateReports() {
 	panels := make(map[string][]api.TablePanel)
 	for _, schedule := range schedules {
 		reportGroup, err := re.datasource.ReportGroupFromSchedule(schedule)
+		log.DefaultLogger.Info("anil test updating schedule id "+schedule.ID + "to status progress")
 		re.datasource.UpdateScheduleProgess(schedule.ID, "progress", schedule)
 
 		if err != nil {
