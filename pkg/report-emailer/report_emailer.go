@@ -24,7 +24,7 @@ func (re *ReportEmailer) Init() {
 
 	// Set up scheduler which will try to send reports every 10 minutes
 	c := cron.New()
-	c.AddFunc("@every 2m", func() {
+	c.AddFunc("@every 5m", func() {
 		re.CreateReports()
 	})
 
@@ -58,7 +58,8 @@ func (re *ReportEmailer) cleanup(schedules []datasource.Schedule) {
 	for _, schedule := range schedules {
 
 		log.DefaultLogger.Info(fmt.Sprintf("Deleting %s.xlsx...", schedule.Name))
-		path := GetFilePath(schedule.Name)
+		schedularFileName := GetFormattedFileName(schedule.Name, schedule.DateFormat, schedule.DatePosition)
+		path := GetFilePath(schedularFileName)
 		err := os.Remove(path)
 		if err != nil {
 			// Failure case shouldn't be much of a problem since we're using the schedule ID for the report name, at the moment
@@ -67,7 +68,8 @@ func (re *ReportEmailer) cleanup(schedules []datasource.Schedule) {
 		}
 
 		schedule.UpdateNextReportTime()
-		re.datasource.UpdateSchedule(schedule.ID, schedule)
+	    log.DefaultLogger.Info("anil test cleanup schedule id "+schedule.ID + "to status success")
+		re.datasource.UpdateSchedule(schedule.ID, "success", schedule)
 	}
 
 	re.inProgress = false
@@ -76,7 +78,6 @@ func (re *ReportEmailer) cleanup(schedules []datasource.Schedule) {
 func (re *ReportEmailer) CreateReport(schedule datasource.Schedule, authConfig *auth.AuthConfig, datasourceID int, em Emailer) error {
 
 	log.DefaultLogger.Debug("ReportEmailer.createReport: start")
-
 	emails := make(map[string][]string)
 	panels := make(map[string][]api.TablePanel)
 
@@ -215,6 +216,9 @@ func (re *ReportEmailer) CreateReports() {
 	panels := make(map[string][]api.TablePanel)
 	for _, schedule := range schedules {
 		reportGroup, err := re.datasource.ReportGroupFromSchedule(schedule)
+		log.DefaultLogger.Info("anil test updating schedule id "+schedule.ID + "to status progress")
+		re.datasource.UpdateScheduleProgess(schedule.ID, "progress", schedule)
+
 		if err != nil {
 			log.DefaultLogger.Error("ReportEmailer.createReports: ReportGroupFromSchedule: " + err.Error())
 			return
